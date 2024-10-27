@@ -9,4 +9,4 @@ E.g. call the domain checker with `https://domainchecker.mailguard.codes?domain=
 This will
 
 - Check the domain `frontline.codes`
-- Redirect you back to `https://mailguard.codes` once you close the check.
+- Redirect you back to `https://mailguard.codes` once you close the tester.
