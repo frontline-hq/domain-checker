@@ -4,6 +4,7 @@
 	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
 	import calFn from '@calcom/embed-snippet';
+	import { page } from '$app/stores';
 	import {
 		McUtilActions,
 		McHeroHeaderSectionFormWrapper
@@ -17,7 +18,7 @@
 	} from '@frontline-hq/untitledui-icons';
 
 	let domainCheckerForm: DomainCheckerForm;
-	let checkedDomain: string | undefined;
+	let domain: string | undefined;
 	let domainIsSafe: boolean | undefined;
 	let subDomainIsSafe: boolean | undefined;
 
@@ -31,6 +32,15 @@
 			layout: 'month_view'
 		});
 	});
+	function useDomainOverlay(_: HTMLElement) {
+		document.body.style.overflowY = 'hidden';
+		return {
+			destroy() {
+				document.body.style.overflowY = 'auto';
+			}
+		};
+	}
+	$: console.log($page.url.searchParams.get('redirect-to'));
 </script>
 
 <svelte:head>
@@ -49,100 +59,103 @@
 	<!-- Update the favicon path if needed -->
 </svelte:head>
 {#if browser}
-	<div
-		class="{checkedDomain !== undefined && domainIsSafe !== undefined
-			? ''
-			: 'hidden '}  bg-uui-bg-primary/70 backdrop-blur-md z-10 fixed w-full h-full top-0"
-	>
-		<tdc-button-a
-			class="absolute right-0 m-8"
-			tdc={{
-				size: { default: 'md', 'uui-desktop': 'lg' },
-				destructive: 'false',
-				hierarchy: 'secondary',
-				coloring: 'gray'
-			}}
-			type="button"
-			on:click={() => {
-				document.body.style.overflowY = 'auto';
-				domainCheckerForm.resetForm();
-			}}
-			icon={{ type: 'icon-only', leading: generalXClose }}
-		/>
-		<div class="flex items-center justify-center w-full h-full">
-			<tdc-mc-hs
-				tdc={{ breakpoint: { default: 'mobile', 'uui-desktop': 'desktop' }, type: 'center' }}
-			>
-				<h6 slot="subheading">
-					<tdc-badge
-						icon={{
-							type: 'icon',
-							leading: domainIsSafe ? securityShield01 : generalSlashCircle01
-						}}
-						tdc={{
-							size: 'lg',
-							color: domainIsSafe ? 'success' : 'error',
-							badgeType: 'Pill color'
-						}}
-						>{domainIsSafe
-							? `${m.domaincheckeroverlaybadgeprotected()}`
-							: `${m.domaincheckeroverlaybadgenotprotected()}`}</tdc-badge
-					>
-				</h6>
-				<!-- TODO continue here scheint geschützt zu sein. -->
-				<h2 slot="heading">
-					{checkedDomain}
-					{domainIsSafe
-						? `${m.domaincheckeroverlaytitleprotected()}`
-						: `${m.domaincheckeroverlaytitlenotprotected()}`}
-					<!-- This h4 only pops-up when a domainIsSafe but has false subdomain-protection settings -->
-					<h4 class="uui-text-lg">
-						{!subDomainIsSafe && domainIsSafe ? `${m.domaincheckeroverlaysubdomaintitle()}` : ''}
-					</h4>
-				</h2>
-				<p>
-					{domainIsSafe
-						? `${m.domaincheckeroverlaydomainissafetext()}`
-						: `${m.domaincheckeroverlaydomainisnotsafetext()}`}
-				</p>
-				<p>
-					{domainIsSafe ? '' : `${m.domaincheckeroverlaydomainisnotsafetext2()}`}
-				</p>
-				<p>
-					{domainIsSafe ? '' : `${m.domaincheckeroverlaydomainisnotsafetext3()}`}
-				</p>
+	{#if domain !== undefined && domainIsSafe !== undefined}
+		<div
+			use:useDomainOverlay
+			class="bg-uui-bg-primary/70 backdrop-blur-md z-10 fixed w-full h-full top-0"
+		>
+			<tdc-button-a
+				class="absolute right-0 m-8"
+				tdc={{
+					size: { default: 'md', 'uui-desktop': 'lg' },
+					destructive: 'false',
+					hierarchy: 'secondary',
+					coloring: 'gray'
+				}}
+				href={$page.url.searchParams.get('redirect-to')}
+				type="button"
+				on:click={() => {
+					domainCheckerForm.resetForm();
+				}}
+				icon={{ type: 'icon-only', leading: generalXClose }}
+			/>
+			<div class="flex items-center justify-center w-full h-full">
+				<tdc-mc-hs
+					tdc={{ breakpoint: { default: 'mobile', 'uui-desktop': 'desktop' }, type: 'center' }}
+				>
+					<h6 slot="subheading">
+						<tdc-badge
+							icon={{
+								type: 'icon',
+								leading: domainIsSafe ? securityShield01 : generalSlashCircle01
+							}}
+							tdc={{
+								size: 'lg',
+								color: domainIsSafe ? 'success' : 'error',
+								badgeType: 'Pill color'
+							}}
+							>{domainIsSafe
+								? `${m.domaincheckeroverlaybadgeprotected()}`
+								: `${m.domaincheckeroverlaybadgenotprotected()}`}</tdc-badge
+						>
+					</h6>
+					<!-- TODO continue here scheint geschützt zu sein. -->
+					<h2 slot="heading">
+						{domain}
+						{domainIsSafe
+							? `${m.domaincheckeroverlaytitleprotected()}`
+							: `${m.domaincheckeroverlaytitlenotprotected()}`}
+						<!-- This h4 only pops-up when a domainIsSafe but has false subdomain-protection settings -->
+						<h4 class="uui-text-lg">
+							{!subDomainIsSafe && domainIsSafe ? `${m.domaincheckeroverlaysubdomaintitle()}` : ''}
+						</h4>
+					</h2>
+					<p>
+						{domainIsSafe
+							? `${m.domaincheckeroverlaydomainissafetext()}`
+							: `${m.domaincheckeroverlaydomainisnotsafetext()}`}
+					</p>
+					<p>
+						{domainIsSafe ? '' : `${m.domaincheckeroverlaydomainisnotsafetext2()}`}
+					</p>
+					<p>
+						{domainIsSafe ? '' : `${m.domaincheckeroverlaydomainisnotsafetext3()}`}
+					</p>
 
-				<McUtilActions slot="after">
-					<tdc-button-a
-						tdc={{
-							size: { default: 'xl', 'uui-desktop': 'xl' },
-							destructive: 'false',
-							hierarchy: 'secondary',
-							coloring: 'gray'
-						}}
-						type="button"
-						on:click={() => {
-							document.body.style.overflowY = 'auto';
-							domainCheckerForm.resetForm();
-						}}
-						icon={{ type: 'icon', leading: arrowsArrowUpLeft }}
-						>{m.domaincheckeroverlaycta1()}</tdc-button-a
-					>
-					<tdc-button
-						data-cal-link="frontline-meeting/20-Minute-Discovery-Session"
-						data-cal-config={JSON.stringify({ layout: 'month_view' })}
-						tdc={{
-							size: { default: 'xl', 'uui-desktop': 'xl' },
-							destructive: 'false',
-							hierarchy: 'primary',
-							coloring: 'color'
-						}}
-						icon={{ type: 'icon', leading: phoneCall }}>{m.domaincheckeroverlaycta2()}</tdc-button
-					>
-				</McUtilActions>
-			</tdc-mc-hs>
+					<McUtilActions slot="after">
+						<!-- Domain contains a redirect parameter -->
+						<tdc-button-a
+							tdc={{
+								size: { default: 'xl', 'uui-desktop': 'xl' },
+								destructive: 'false',
+								hierarchy: 'secondary',
+								coloring: 'gray'
+							}}
+							type="button"
+							href={$page.url.searchParams.get('redirect-to')}
+							on:click={() => {
+								domainCheckerForm.resetForm();
+							}}
+							icon={{ type: 'icon', leading: arrowsArrowUpLeft }}
+							>{m.domaincheckeroverlaycta1()}</tdc-button-a
+						>
+						<tdc-button
+							data-cal-link="frontline-meeting/20-Minute-Discovery-Session"
+							data-cal-config={JSON.stringify({ layout: 'month_view' })}
+							tdc={{
+								size: { default: 'xl', 'uui-desktop': 'xl' },
+								destructive: 'false',
+								hierarchy: 'primary',
+								coloring: 'color'
+							}}
+							icon={{ type: 'icon', leading: phoneCall }}>{m.domaincheckeroverlaycta2()}</tdc-button
+						>
+					</McUtilActions>
+				</tdc-mc-hs>
+			</div>
 		</div>
-	</div>
+	{/if}
+
 	<div class="min-h-[calc(100vh-8rem)] flex flex-col justify-center">
 		<tdc-mc-hhs
 			id="domaintester"
@@ -177,7 +190,7 @@
 					<!-- Todo might be a solution for not setting classes on the form slot -->
 					<DomainCheckerForm
 						bind:this={domainCheckerForm}
-						bind:checkedDomain
+						bind:domain
 						bind:domainIsSafe
 						bind:subDomainIsSafe
 						slot="form"
