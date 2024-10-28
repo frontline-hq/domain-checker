@@ -40,17 +40,16 @@
 			}
 		};
 	}
-	$: console.log($page.url.searchParams.get('redirect-to'));
 </script>
 
 <svelte:head>
 	<title>{m.pageheadtitle()}</title>
 	<meta name="description" content={m.pageheadmetadescription()} />
-	<link rel="canonical" href="https://www.frontline.codes" />
+	<link rel="canonical" href="https://www.domainchecker.mailguard.codes" />
 	<meta property="og:title" content={m.pageheadogtitle()} />
 	<meta property="og:description" content={m.pageheadogdescription()} />
-	<meta property="og:image" content="https://www.frontline.codes/static/frontline-logo.png" />
-	<meta property="og:url" content="https://www.frontline.codes" />
+	<meta property="og:image" content="https://mailguard.codes/static/LogotypeLight.svg" />
+	<meta property="og:url" content="https://domainchecker.mailguard.codes" />
 	<meta name="robots" content="index, follow" />
 	<!-- Add this in later, when added to google-site-verification -->
 	<!-- <meta name="google-site-verification" content="Bq4e8ICS3Kqjp-0k2C-1PSX5cnY9btnGGI0ipjlYsds" /> -->
