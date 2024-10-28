@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { PUBLIC_LICENSE } from '$env/static/public';
+	import { PUBLIC_UUI_LICENSE } from '$env/static/public';
 	import { License } from '@frontline-hq/uui/license';
 	import '../app.css';
 	import { ParaglideJS } from '@inlang/paraglide-js-adapter-sveltekit';
@@ -11,7 +11,7 @@
 </script>
 
 <ParaglideJS {i18n}>
-	<License license={PUBLIC_LICENSE}>
+	<License license={PUBLIC_UUI_LICENSE}>
 		{#if browser}
 			<slot />
 			<tdc-mc-footer tdc={{ breakpoint: { default: 'mobile', 'uui-desktop': 'desktop' } }}>

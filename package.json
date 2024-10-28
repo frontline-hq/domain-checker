@@ -3,8 +3,11 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
-		"dev": "vite dev",
-		"build": "paraglide-js compile --project ./project.inlang && vite build",
+		"dev": "infisical run -- pnpm vite dev",
+		"build": "if [ \"$NODE_ENV\" = \"production\" ]; tparaglidehen pnpm ci-build; else pnpm dev-build; fi",
+		"dev-build": "infisical run --env=\"dev\" -- -js compile --project ./project.inlang && vite build",
+		"ci-build": "infisical run --token=$(infisical login --method=universal-auth --client-id=$INFISICAL_CLIENT_ID --client-secret=$INFISICAL_CLIENT_SECRET --silent --plain) --projectId=$INFISICAL_PROJECT_ID --env=\"prod\" -- paraglide-js compile --project ./project.inlang && vite build",
+		"start": "infisical run --token=$(infisical login --method=universal-auth --client-id=$INFISICAL_CLIENT_ID --client-secret=$INFISICAL_CLIENT_SECRET --silent --plain) --projectId=$INFISICAL_PROJECT_ID --env=\"prod\" -- node build",
 		"prod-prep": "export NPM_CONFIG_TOKEN && echo //registry.npmjs.org/:_authToken=\\$NPM_CONFIG_TOKEN >> .npmrc",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",

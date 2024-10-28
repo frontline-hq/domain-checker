@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+            args:
+                - INFISICAL_CLIENT_ID=${INFISICAL_CLIENT_ID}
+                - INFISICAL_CLIENT_SECRET=${INFISICAL_CLIENT_SECRET}
+                - INFISICAL_PROJECT_ID=${INFISICAL_PROJECT_ID}
+        ports:
+            - "3000:3000"
