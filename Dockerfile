@@ -18,7 +18,7 @@ ARG INFISICAL_PROJECT_ID
 RUN infisical run --token=$(infisical login --method=universal-auth --client-id="$INFISICAL_CLIENT_ID" --client-secret="$INFISICAL_CLIENT_SECRET" --silent --plain) --projectId="$INFISICAL_PROJECT_ID" --env="prod" -- bash -c 'pnpm config set "//registry.npmjs.org/:_authToken" "${NPM_TOKEN}"'
 
 # Unified installation and build step
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod=false --ignore-scripts
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod=false --frozen-lockfile --ignore-scripts
 RUN bash -c 'pnpm run build'
 
 EXPOSE 3000
